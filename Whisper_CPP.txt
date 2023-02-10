@@ -1,0 +1,15 @@
+commands (PS) --- ./command -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-small.en.bin -t 8
+commands (cmd) --- command.exe -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-small.en.bin -t 8
+
+
+bench (PS) --- ./bench -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-small.en.bin -t 4
+bench (cmd) -- bench.exe -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-small.en.bin -t 4
+
+
+stream (PS) --- ./stream -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-base.en.bin -t 8 --step 500 --length 5000
+stream (cmd) --- stream.exe -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-base.en.bin -t 8 --step 500 --length 5000
+
+
+
+main (PS) --- ./main -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-base.en.bin -f C:/Users/robcog/workspace/Malineni/whisper.cpp/samples/jfk.wav
+main (cmd) --- main.exe -m C:/Users/robcog/workspace/Malineni/whisper.cpp/models/ggml-base.en.bin -f C:/Users/robcog/workspace/Malineni/whisper.cpp/samples/jfk.wav

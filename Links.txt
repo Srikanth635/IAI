@@ -27,3 +27,7 @@ https://cognitivewaves.wordpress.com/makefiles-windows/
 
 
 OPENBLAS = https://github.com/xianyi/OpenBLAS/issues/805
+
+
+speech recognnition - whisper - includes -> ggml,sdl2,openblas,whisper header files
+                              - libraries -> x64 -> .lib,.dll files

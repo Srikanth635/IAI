@@ -5,6 +5,23 @@
 //General Log
 //DEFINE_LOG_CATEGORY(SpeechRecognitionPlugin);
 
+bool sdl_poll_events() {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+        case SDL_QUIT:
+        {
+            return false;
+        } break;
+        default:
+            break;
+        }
+    }
+
+    return true;
+}
+
+
 std::string to_timestamp(int64_t t) {
     int64_t sec = t / 100;
     int64_t msec = t - sec * 100;
@@ -15,6 +32,11 @@ std::string to_timestamp(int64_t t) {
     snprintf(buf, sizeof(buf), "%02d:%02d.%03d", (int)min, (int)sec, (int)msec);
 
     return std::string(buf);
+}
+
+std::string trim(const std::string& s) {
+    std::regex e("^\\s+|\\s+$");
+    return std::regex_replace(s, e, "");
 }
 
 std::string transcribe(whisper_context* ctx, const FWhisperParams& params, const std::vector<float>& pcmf32, float& prob, int64_t& t_ms) {
@@ -34,7 +56,7 @@ std::string transcribe(whisper_context* ctx, const FWhisperParams& params, const
     wparams.single_segment = true;
     wparams.max_tokens = params.max_tokens;
     wparams.language = params.language.c_str();
-    wparams.n_threads = params.n_threads;
+    wparams.n_threads = int(params.n_threads);
 
     wparams.audio_ctx = params.audio_ctx;
     wparams.speed_up = params.speed_up;
@@ -97,7 +119,7 @@ float similarity(const std::string& s0, const std::string& s1) {
 }
 
 FMySpeechWorker::FMySpeechWorker() {
-	UE_LOG(LogTemp, Warning, TEXT("MySpeechWorker Constructor"));
+	
    
 }
 
@@ -116,7 +138,7 @@ void FMySpeechWorker::Stop() {
 	ClientMessage(FString("Thread Stopped"));
 }
 
-bool FMySpeechWorker::StartThread(AMyActor* manager, FWhisperParams whisperParams) {
+bool FMySpeechWorker::StartThread(AMySpeechActor* manager, FWhisperParams whisperParams) {
 	UE_LOG(LogTemp, Warning, TEXT("Thread started"));
     //params = wparams;
 	Manager = manager;
@@ -132,7 +154,7 @@ void FMySpeechWorker::ClientMessage(FString text) {
 
 
 uint32 FMySpeechWorker::Run() {
-	ClientMessage(FString("RUN IS CALLED"));
+	//ClientMessage(FString("RUN IS CALLED"));
 
     struct whisper_context* ctx = whisper_init_from_file(params.model.c_str());
 
@@ -156,7 +178,7 @@ uint32 FMySpeechWorker::Run() {
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("WHISPER CONTEXT IS NOT A NULL POINTER"));
+        //UE_LOG(LogTemp, Warning, TEXT("WHISPER CONTEXT IS NOT A NULL POINTER"));
     }
     
     // wait for 1 second to avoid any buffered noise
@@ -164,6 +186,16 @@ uint32 FMySpeechWorker::Run() {
     audio.clear();
 
     int  ret_val = 0;
+
+    std::ofstream fout;
+    if (params.fname_out.length() > 0) {
+        fout.open(params.fname_out);
+        if (!fout.is_open()) {
+            fprintf(stderr, "%s: failed to open output file '%s'!\n", __func__, params.fname_out.c_str());
+            UE_LOG(LogTemp, Warning, TEXT("failed to open output file '%s'"), *FString(params.fname_out.c_str()));
+            return 1;
+        }
+    }
 
     //----------------------GENERAL TRANSCRIPTION---------------------//
 
@@ -177,12 +209,12 @@ uint32 FMySpeechWorker::Run() {
     std::vector<float> pcmf32_cur;
     std::vector<float> pcmf32_prompt;
 
-    const std::string k_prompt = "Okay Whisper";
+    const std::string k_prompt = "Okay, whisper.";
 
     fprintf(stderr, "\n");
     fprintf(stderr, "%s: general-purpose mode\n", __func__);
 
-    UE_LOG(LogTemp, Warning, TEXT("[START SPEAKING]"));
+    UE_LOG(LogTemp, Warning, TEXT("[---------------------------------------------]"));
 
 
 	//int counter = 0;
@@ -218,14 +250,18 @@ uint32 FMySpeechWorker::Run() {
                     // wait for activation phrase
                     audio.get(params.prompt_ms, pcmf32_cur);
 
-                    const auto txt = transcribe(ctx, params, pcmf32_cur, prob0, t_ms);
+                    const auto txt = trim(transcribe(ctx, params, pcmf32_cur, prob0, t_ms));
 
                     fprintf(stdout, "%s: Heard '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", txt.c_str(), "\033[0m", (int)t_ms);
-                    UE_LOG(LogTemp, Warning, TEXT("Heard %s"), *FString(txt.c_str()));
+                    UE_LOG(LogTemp, Warning, TEXT("HEARD PROMPT : %s"), *FString(txt.c_str()));
+
+                    if (params.fname_out.length() > 0) {
+                        fout << txt.c_str();
+                    }
 
                     const float sim = similarity(txt, k_prompt);
 
-                    if (txt.length() < 0.8 * k_prompt.length() || txt.length() > 1.2 * k_prompt.length() || sim < 0.8f) {
+                    if (txt.length() < 0.6 * k_prompt.length() || txt.length() > 1.4 * k_prompt.length() || sim < 0.8f) {
                         fprintf(stdout, "%s: WARNING: prompt not recognized, try again\n", __func__);
                         UE_LOG(LogTemp, Warning, TEXT("WARNING: prompt not recognized, try again"));
                         ask_prompt = true;
@@ -236,6 +272,7 @@ uint32 FMySpeechWorker::Run() {
                         UE_LOG(LogTemp, Warning, TEXT("The prompt has been recognized!"));
                         fprintf(stdout, "%s: Waiting for voice commands ...\n", __func__);
                         UE_LOG(LogTemp, Warning, TEXT("Waiting for voice commands"));
+                        UE_LOG(LogTemp, Warning, TEXT("START SPEAKING"));
                         fprintf(stdout, "\n");
 
                         // save the audio for the prompt
@@ -244,14 +281,14 @@ uint32 FMySpeechWorker::Run() {
                     }
                 }
                 else
-                {
+                {                   
                     // we have heard the activation phrase, now detect the commands
                     audio.get(params.command_ms, pcmf32_cur);
 
                     // prepend the prompt audio
                     pcmf32_cur.insert(pcmf32_cur.begin(), pcmf32_prompt.begin(), pcmf32_prompt.end());
 
-                    const auto txt = transcribe(ctx, params, pcmf32_cur, prob, t_ms);
+                    const auto txt = trim(transcribe(ctx, params, pcmf32_cur, prob, t_ms));
 
                     prob = 100.0f * (prob - prob0);
 
@@ -271,12 +308,23 @@ uint32 FMySpeechWorker::Run() {
                         }
                     }
 
-                    const std::string command = txt.substr(best_len);
+                    const std::string command = trim(txt.substr(best_len));
 
                     fprintf(stdout, "%s: Command '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", command.c_str(), "\033[0m", (int)t_ms);
+                    UE_LOG(LogTemp, Warning, TEXT("HEARD COMMAND : %s"), *FString(command.c_str()));
+
+                    if (params.fname_out.length() > 0) {
+                        fout << command.c_str();
+                    }
+
                     fprintf(stdout, "\n");
+                    have_prompt = false;
+                    ask_prompt = true;
                 }
 
+                if (params.fname_out.length() > 0) {
+                    fout << std::endl;
+                }
                 audio.clear();
             }
 
@@ -303,21 +351,7 @@ uint32 FMySpeechWorker::Run() {
 
 ///////////////////////////////////////////
 
-bool sdl_poll_events() {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-        case SDL_QUIT:
-        {
-            return false;
-        } break;
-        default:
-            break;
-        }
-    }
 
-    return true;
-}
 
 //
 // SDL Audio capture
@@ -326,8 +360,6 @@ audio_async::audio_async(int len_ms) {
     m_len_ms = len_ms;
 
     m_running = false;
-
-    UE_LOG(LogTemp, Warning, TEXT("AUDIO AYSNC INITIATED"));
 }
 
 audio_async::~audio_async() {
@@ -396,12 +428,19 @@ bool audio_async::init(int capture_id, int sample_rate) {
         //fprintf(stderr, "%s:     - channels:          %d (required: %d)\n", __func__, capture_spec_obtained.channels,
             //capture_spec_requested.channels);
         //fprintf(stderr, "%s:     - samples per frame: %d\n", __func__, capture_spec_obtained.samples);
+        UE_LOG(LogTemp, Warning, TEXT("obtained spec for input device (SDL Id = %d)"), m_dev_id_in);
+        UE_LOG(LogTemp, Warning, TEXT(" -sample rate : % d"), capture_spec_obtained.freq);
+        UE_LOG(LogTemp, Warning, TEXT(" - format:          %d (required: %d)"), capture_spec_obtained.format,
+            capture_spec_requested.format);
+        UE_LOG(LogTemp, Warning, TEXT(" - channels:          %d (required: %d)"), capture_spec_obtained.channels,
+            capture_spec_requested.channels);
+        UE_LOG(LogTemp, Warning, TEXT(" - samples per frame: %d"), capture_spec_obtained.samples);
     }
 
     m_sample_rate = capture_spec_obtained.freq;
 
     m_audio.resize((m_sample_rate * m_len_ms) / 1000);
-    UE_LOG(LogTemp, Warning, TEXT("AUDIO DEVICE ACTIVATED"));
+    //UE_LOG(LogTemp, Warning, TEXT("AUDIO DEVICE ACTIVATED"));
     return true;
 }
 

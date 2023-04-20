@@ -1,0 +1,83 @@
+import pyaudio
+import wave
+import whisper
+
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+
+
+
+
+# Audio recording parameters
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+CHUNK = 1024
+
+# Global variable to store the recording state
+recording = False
+waves = ""
+# Initialize PyAudio
+audio = pyaudio.PyAudio()
+
+# Route to the index page
+@app.route('/')
+def index():
+    # return render_template('index.html')
+    return "Hello"
+
+# Route to start recording
+# @app.route('/start_recording')
+# def start_recording():
+#     global recording
+#     recording = True
+#     return redirect(url_for('record'))
+
+# Route to stop recording
+@app.route('/stop_recording')
+def stop_recording():
+    global recording
+    recording = False
+    # global waves
+    # print(waves)
+    # Whisper Params
+    # model = whisper.load_model("base")
+    # result = model.transcribe(waves)
+    # print(result["text"])
+    # with open('output.txt', 'w') as file:
+    #     file.write(waves)
+
+    return "Stopped Recording"
+
+# Route to handle the audio recording
+@app.route('/record')
+def record():
+    global recording
+    recording = True
+
+    if recording:
+        # Open an audio stream
+        stream = audio.open(format=FORMAT, channels=CHANNELS,
+                            rate=RATE, input=True, frames_per_buffer=CHUNK)
+        frames = []
+        while recording:
+            audio_data = stream.read(CHUNK)
+            frames.append(audio_data)
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
+
+        global waves
+        waves = "naveen.wav"
+
+        wave_file = wave.open(waves, 'wb')
+        wave_file.setnchannels(CHANNELS)
+        wave_file.setsampwidth(audio.get_sample_size(FORMAT))
+        wave_file.setframerate(RATE)
+        wave_file.writeframes(b''.join(frames))
+        wave_file.close()
+    return "sasasa"
+
+if __name__ == '__main__':
+    app.run()

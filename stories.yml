@@ -8,6 +8,65 @@ stories:
   - intent: pickup
   - action: utter_activity
 
+- story: activity2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: pickup
+  - action: utter_activity
+  - intent: serve
+  - action: utter_activity
+
+- story: activity3
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: catch
+  - action: utter_activity
+  - intent: serve
+  - action: utter_activity
+
+- story: activity3
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: serve
+  - action: utter_activity
+
+- story: activity4
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: pickup
+  - action: utter_activity
+  - intent: slice
+  - action: utter_activity
+  - intent: serve
+  - action: utter_activity
+
+- story: activity4
+  steps:
+  - intent: pickup
+  - action: utter_activity
+  - intent: slice
+  - action: utter_activity
+
+- story: activity5
+  steps:
+  - intent: pickup
+  - action: utter_activity
+  - intent: slice
+  - action: utter_activity
+  - intent: pour
+  - action: utter_activity
+
+- story: activity6
+  steps:
+  - intent: pickup
+  - action: utter_activity
+  - intent: pour
+  - action: utter_activity
+
 - story: happy path
   steps:
   - intent: greet

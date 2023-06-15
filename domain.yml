@@ -9,6 +9,14 @@ intents:
   - mood_unhappy
   - bot_challenge
   - pickup
+  - serve
+  - catch
+  - slice
+  - pour
+
+entities:
+  - dish
+  - object
 
 responses:
   utter_activity:

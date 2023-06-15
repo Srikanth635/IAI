@@ -4,9 +4,87 @@ nlu:
 - intent: pickup
   examples: |
     - pick up the [glass]{"entity": "object", "role": "target"}
-    - pick the [bottle]{"entity": "object", "role": "target"} from the [table]{"entity": "object", "role": "source"}
+    - pick the [bottle]{"entity": "object", "role": "target"} from the [table]{"entity": "object", "role": "helper"}
     - grab the [cup]{"entity": "object", "role": "target"}
-    - Go to the [table]{"entity": "object", "role": "source"} and pick up [tin]{"entity": "object", "role": "target"} from it.
+    - grab the [spills]{"entity": "dish"} quickly with a kitchen [towel]{"entity": "object", "role": "target"}.
+    - go to the [table]{"entity": "object", "role": "helper"} and pick up [tin]{"entity": "object", "role": "target"} from it.
+    - to prevent accidents grasp the slipping [cutting board]{"entity": "object", "role": "target"}.
+    
+- intent: catch
+  examples: |
+    - catch the falling [crumbs]{"entity": "dish"} with a crumb [tray]{"entity": "object", "role": "target"}.
+    - intercept the [drips]{"entity": "dish"} by placing a [plate]{"entity": "object", "role": "helper"} underneath the mixing [bowl]{"entity": "object", "role": "target"}.
+    - capture the excess [oil]{"entity": "dish"} using a paper [towel]{"entity": "object", "role": "target"} or absorbent [pad]{"entity": "object", "role": "target"}.
+    - seize the runaway [vegetables]{"entity": "dish"} with [tongs]{"entity": "object", "role": "first_pick"} or a slotted [spoon]{"entity": "object", "role": "first_pick"}.
+    - snag the flying [flour particles]{"entity": "dish"} with a mesh [sieve]{"entity": "object", "role": "target"}.
+    - retrieve the escaped ingredients using a [spatula]{"entity": "object", "role": "target"} or [spoon]{"entity": "object", "role": "target"}.
+    - intercept the splattering [grease]{"entity": "dish"} by using a [splatter screen]{"entity": "object", "role": "target"}.
+    
+- intent: serve
+  examples: |
+    - serve the pasta onto the [plates]{"entity": "object", "role": "target"} using a serving [spoon]{"entity": "object", "role": "helper"}.
+    - dish out the soup into [bowls]{"entity": "object", "role": "final_pick"} with a [ladle]{"entity": "object", "role": "helper"}.
+    - portion the salad onto individual [plates]{"entity": "object", "role": "final_pick"} using [tongs]{"entity": "object", "role": "helper"}.
+    - distribute the drinks to the [guests]{"entity": "object", "role": "final_pick"} using a beverage [dispenser]{"entity": "object", "role": "helper"}.
+    - spoon the [sauce]{"entity": "dish", "role": "secondary"} onto the [pizza]{"entity": "dish", "role": "primary"} crust.
+    - ladle the [stew]{"entity": "dish"} into [bowls]{"entity": "object", "role": "target"} and serve.
+    - scoop the [ice cream]{"entity": "dish"} into [cones]{"entity": "object", "role": "target"} or [bowls]{"entity": "object", "role": "target"}.
+    - top the [pancakes]{"entity": "dish", "role": "primary"} with [syrup]{"entity": "dish", "role": "secondary"} and serve.
+    - plate the [appetizers]{"entity": "dish"} and pass them around.
+
+- intent: slice
+  examples: |
+    - cut the [vegetables]{"entity": "dish"} into small cubes using a [knife]{"entity": "object", "role": "helper"}.
+    - slice the [bread]{"entity": "dish"} into even pieces using a bread [knife]{"entity": "object", "role": "helper"}.
+    - chop the [onions]{"entity": "dish"} finely with a chef's [knife]{"entity": "object", "role": "helper"}.
+    - dice the [tomatoes]{"entity": "dish"} into small chunks using a [cutting board]{"entity": "object", "role": "helper"} and a sharp [knife]{"entity": "object", "role": "helper"}.
+    - carve the roast [meat]{"entity": "dish"} into thin slices using a carving [knife]{"entity": "object", "role": "helper"} and a [chopping board]{"entity" : "object", "role": "helper"}.
+    - julienne the [carrots]{"entity": "dish"} into thin strips with a [mandoline]{"entity": "object", "role": "helper"}.
+    - use a [mandoline]{"entity": "object", "role": "helper"} to thinly slice the [cucumbers]{"entity": "dish"} for the salad.
+    - trim the excess fat off the [meat]{"entity": "dish"} using kitchen [shears]{"entity": "object", "role": "helper"}.
+    - section the [citrus fruit]{"entity": "dish"} using a citrus [zester]{"entity": "object", "role": "helper"}.
+    - score the [pastry]{"entity": "dish"} with a sharp [knife]{"entity": "object", "role": "helper"} before baking.
+    - shred the [cheese]{"entity": "dish"} using a [grater]{"entity": "object", "role": "helper"} or a food processor.
+    - create uniform slices of [cheese]{"entity": "dish"} using a cheese [slicer]{"entity": "object", "role": "helper"} or a sharp [knife]{"entity": "object", "role": "helper"}.
+    - use an electric [slicer]{"entity": "object", "role": "helper"} to cut thin slices of deli [meats]{"entity": "dish"}.
+    - employ a sharp [shear]{"entity": "object", "role": "helper"} and cut the [chicken breast]{"entity": "dish"} into pieces.
+    - by using a [knife]{"entity": "object", "role": "helper"} cut the [vegetables]{"entity": "dish"} into cubes.
+
+- intent: pour
+  examples: |
+    - pour the [gravy]{"entity": "dish", "role": "secondary"} over the mashed [potatoes]{"entity": "dish", "role": "primary"}.
+    - pour the hot [soup]{"entity": "dish"} into [bowls]{"entity": "object", "role": "target"} using a [ladle]{"entity": "object", "role": "helper"}.
+    - transfer the [sauce]{"entity": "dish"} into a [serving dish]{"entity": "object", "role": "target"} with a [ladle]{"entity": "object", "role": "helper"}.
+    - empty the contents of the [blender]{"entity": "object", "role": "helper"} into a [pitcher]{"entity": "object", "role": "target"}.
+    - decant the [wine]{"entity": "dish"} into wine [glasses]{"entity": "object", "role": "target"} from the [bottle]{"entity": "object", "role": "helper"}.
+    - fill the coffee [cups]{"entity": "object", "role": "target"} with freshly brewed [coffee]{"entity": "dish", "role": "final_pick"} from the [pot]{"entity": "object", "role": "helper"}.
+    - dispense the pancake [batter]{"entity": "dish"} into the hot [skillet]{"entity": "object", "role": "target"}.
+    - tip the melted [chocolate]{"entity": "dish"} into a silicone [mold]{"entity": "object", "role": "target"}.
+    - drizzle the [dressing]{"entity": "dish", "role": "secondary"} onto the [salad]{"entity": "dish", "role": "primary"} using a [spoon]{"entity": "object", "role": "helper"}.
+    - release the pancake [batter]{"entity": "dish"} onto the [griddle]{"entity": "object", "role": "target"} using a [ladle]{"entity": "object", "role": "helper"}.
+    - empty the melted [butter]{"entity": "dish"} into a small [bowl]{"entity": "object", "role": "target"} for dipping.
+    - pour the hot [sauce]{"entity": "dish", "role": "secondary"} onto the cooked [pasta]{"entity": "dish", "role": "primary"} using a [ladle]{"entity": "object", "role": "helper"}.
+    - drizzle the olive [oil]{"entity": "dish", "role": "secondary"} onto the [salad]{"entity": "dish", "role": "primaryk"} from a small [bottle]{"entity": "object", "role": "helper"}.
+    - cascade the [syrup]{"entity": "dish", "role": "secondary"} onto the [pancakes]{"entity": "dish", "role": "primary"} with a squeeze [bottle]{"entity": "object", "role": "helper"}.
+    - splash the [gravy]{"entity": "dish", "role": "secondary"} onto the mashed [potatoes]{"entity": "dish", "role": "primary"} using a [ladle]{"entity": "object", "role": "helper"}.
+    - stream the melted [cheese]{"entity": "dish", "role": "secondary"} onto the [nachos]{"entity": "dish", "role": "primary"} with a [spoon]{"entity": "object", "role": "helper"}.
+    - dribble the caramel [sauce]{"entity": "dish", "role": "secondary"} onto the [ice cream]{"entity": "dish", "role": "primary"} from a [pitcher]{"entity": "object", "role": "helper"}.
+    - shower the powdered [sugar]{"entity": "dish", "role": "secondary"} onto the freshly baked [cookies]{"entity": "dish", "role": "primary"}.
+    - sprinkle the [herbs]{"entity": "dish", "role": "secondary"} onto the [pizza]{"entity": "dish", "role": "primary"} with a [shaker]{"entity": "object", "role": "helper"}.
+    - coat the [steak]{"entity": "dish", "role": "primary"} with the [marinade]{"entity": "dish", "role": "secondary"} by pouring it onto it.
+    - release the [dressing]{"entity": "dish", "role": "secondary"} onto the [salad]{"entity": "dish", "role": "primary"} using a dressing [bottle]{"entity": "object", "role": "helper"}.
+    - sprinkle the [salt]{"entity": "dish", "role": "secondary"} with a [shaker]{"entity": "object", "role": "helper"} onto the [pizza]{"entity": "dish", "role": "primary"}.
+    - use a [spoon]{"entity": "object", "role": "helper"} to stream the melted [cheese]{"entity": "dish", "role": "secondary"} onto the [nachos]{"entity": "dish", "role": "primary"}
+    - pour the hot [water]{"entity": "dish"} from the [kettle]{"entity": "object", "role": "helper"} into the [teapot]{"entity": "object", "role": "target"}.
+    - empty the [milk]{"entity": "dish"} from the [carton]{"entity": "object", "role": "helper"} into a [pitcher]{"entity": "object", "role": "target"}.
+    - dispense the [juice]{"entity": "dish"} from the [bottle]{"entity": "object", "role": "helper"} into the [glass]{"entity": "object", "role": "target"}.
+    - extract the [broth]{"entity": "dish"} from the [pot]{"entity": "object", "role": "helper"} using a [ladle]{"entity": "object", "role": "helper"}.
+    - decant the [wine]{"entity": "dish"} from the [bottle]{"entity": "object", "role": "helper"} into wine [glasses]{"entity": "object", "role": "target"}.
+    - drain the excess [oil]{"entity": "dish"} from the frying [pan]{"entity": "object", "role": "helper"}.
+    - tip the melted [chocolate]{"entity": "dish"} from the [bowl]{"entity": "object", "role": "helper"} into a [mold]{"entity": "object", "role": "target"}.
+    - transfer the [batter]{"entity": "dish"} from the mixing [bowl]{"entity": "object", "role": "helper"} into the cake [pan]{"entity": "object", "role": "target"}.
+    - extract the [coffee]{"entity": "dish"} from the [coffee maker]{"entity": "object", "role": "helper"} into a [mug]{"entity": "object", "role": "target"}.
+    - drain the [pasta]{"entity": "dish"} from the [pot]{"entity": "object", "role": "helper"} into a [colander]{"entity": "object", "role": "target"}.
 
 - intent: greet
   examples: |

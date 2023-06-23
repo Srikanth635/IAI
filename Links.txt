@@ -31,3 +31,8 @@ OPENBLAS = https://github.com/xianyi/OpenBLAS/issues/805
 
 speech recognnition - whisper - includes -> ggml,sdl2,openblas,whisper header files
                               - libraries -> x64 -> .lib,.dll files
+
+
+https://botfront.io/blog/better-intent-classification-and-entity-extraction-with-diet-classifier-pipeline-optimization
+
+https://botfront.io/blog/how-intent-classification-works-in-nlu
